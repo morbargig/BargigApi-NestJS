@@ -39,7 +39,9 @@ async function bootstrap() {
   const swaggerCustomOptions: ExpressSwaggerCustomOptions = {
     customSiteTitle: 'Bargig Api',
     explorer: true,
-
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
     customfavIcon: 'https://firebasestorage.googleapis.com/v0/b/morbargig-a81d2.appspot.com/o/smallMorBargigSig.png?alt=media'
   }
 
