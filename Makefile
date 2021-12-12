@@ -1,7 +1,10 @@
 SHELL=/bin/bash
 
+
+NAME = $(git config user.name)
+
 auto-commit: 
-	`git commit -am "echo 'Auto commit by ${git config user.name} at $(date +%Y-%m-%dT%H:%M%z)'" && git push origin $(git branch --show-current)`
+	`git add . && git commit -m "echo 'Auto commit by $(NAME) at $(date +%Y-%m-%dT%H:%M%z)'" && git push origin $(git branch --show-current)`
 pull:
 	`git pull --recurse-submodules origin $(git branch --show-current)`
 get-remote:
