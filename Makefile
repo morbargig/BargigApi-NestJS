@@ -1,5 +1,6 @@
 SHELL=/bin/bash
-
+test:
+	`git commit -am "Auto commit by $$(git config user.name) at $(date +%Y-%m-%dT%H:%M%z)"`
 auto-commit: 
 	`git commit -am "Auto commit by $$(git config user.name) at $(date +%Y-%m-%dT%H:%M%z)" && git push origin $(git branch --show-current)`
 pull:
