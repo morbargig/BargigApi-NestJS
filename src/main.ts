@@ -9,31 +9,18 @@ async function bootstrap() {
     .setTitle('Bargig Api')
     .setDescription('The base Nest Api')
     .setVersion('1.0')
-    // .addBasicAuth(
+    // .addBearerAuth(
     //   {
     //     type: 'http',
-    //     name: 'User Credential',
-    //     description: 'Enter Id And PhoneNumber',
+    //     scheme: 'bearer',
+    //     bearerFormat: 'JWT',
+    //     name: 'JWT',
+    //     description: 'Enter JWT token',
     //     in: 'header',
     //   },
     //   // 'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controller!
-    //   'user-credential',
+    //   'access-token',
     // )
-    // .addApiKey()
-    // .addOAuth2()
-    // .addCookieAuth()
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
-      },
-      // 'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controller!
-      'access-token',
-    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   const swaggerCustomOptions: ExpressSwaggerCustomOptions = {
@@ -46,7 +33,6 @@ async function bootstrap() {
   }
 
   SwaggerModule.setup('api', app, document, swaggerCustomOptions);
-
   await app.listen(3000);
 }
 bootstrap();
