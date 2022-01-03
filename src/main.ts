@@ -32,6 +32,8 @@ async function bootstrap() {
     customfavIcon: 'https://firebasestorage.googleapis.com/v0/b/morbargig-a81d2.appspot.com/o/smallMorBargigSig.png?alt=media'
   }
 
+  app.enableCors(); 
+  
   SwaggerModule.setup('api', app, document, swaggerCustomOptions);
   await app.listen(3000);
 }
