@@ -8,12 +8,13 @@ import { LocalStrategy } from './local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { RefreshStrategy } from './refresh.strategy';
+import { authSecret } from '../config/auth';
 // code hidden for disply purpose
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
-      secret: '123456',
+      secret: authSecret.authSecret,
       signOptions: {
         expiresIn: '5m',
       },

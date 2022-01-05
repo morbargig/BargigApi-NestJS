@@ -3,7 +3,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { RegistrationReqModel } from 'src/models/registration.req.model';
 import { UsersService } from './users.service';
 import { CurrentUser } from '../models/current.user';
-import { Response } from "express";
+import { Response, Request } from 'express';
+import { authCookies } from '../config/auth';
 
 @Controller('users')
 export class UsersController {
@@ -28,7 +29,11 @@ export class UsersController {
             token,
             refreshToken,
         };
-        res.cookie('auth-cookie', secretData, { httpOnly: true, });
+        res.cookie(authCookies.authCookie, secretData, {
+            httpOnly: true,
+            // domain: 'http://localhost:4200', // your domain here!
+            // expires: new Date(Date.now() + 1000 * 60 * 60 * 24)
+        });
         return { msg: 'success' };
     }
 
@@ -52,30 +57,56 @@ export class UsersController {
             token,
             refreshToken,
         };
-
-        res.cookie('auth-cookie', secretData, { httpOnly: true });
+        res.cookie(authCookies.authCookie, secretData, {
+            httpOnly: true,
+            // domain: 'http://localhost:4200', // your domain here!
+            // expires: new Date(Date.now() + 1000 * 60 * 60 * 24)
+        });
         return { msg: 'success' };
     }
 
     @Post('code')
-    async code(@Req() req, @Res() res: Response) {
-        const authCode = new Array(10).fill(null).map(() => Math.floor(Math.random() * 10)).join('');
-        console.log(req.body)
-        // this.authCodes.add(authCode);
-        res.redirect(`http://localhost:4200/oauth-callback?code=${authCode}`);
+    @UseGuards(AuthGuard('local'))
+    async code(
+        @Req() req,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        const token = await this.userService.getJwtToken(req.user as CurrentUser);
+        const refreshToken = await this.userService.getRefreshToken(
+            req.user.userId,
+        );
+        const secretData = {
+            token,
+            refreshToken,
+        };
+        res.cookie(authCookies.authCookie, secretData, {
+            httpOnly: true,
+            // domain: 'http://localhost:4200', // your domain here!
+            // expires: new Date(Date.now() + 1000 * 60 * 60 * 24)
+        });
+        res.redirect(`http://localhost:4200/oauth-callback?code=${token}`);
     }
 
-    @Post('token')
-    async token(@Req() req, @Res() res: Response) {
-        console.log(req.body)
-        // Generate a string of 50 random digits
-        const token = new Array(50).fill(null).map(() => Math.floor(Math.random() * 10)).join('');
-        res.json({ 'access_token': token, 'expires_in': 60 * 60 * 24 });
-    }
-
-    // Endpoint secured by auth token
-    @Get('secure')
-    async secure(@Req() req, @Res() res: Response) {
-        return res.json({ answer: 42 });
-    }
+    // @Post('token')
+    // // @UseGuards(AuthGuard('jwt'))
+    // async token(
+    //     @Req() req,
+    //     @Res({ passthrough: true }) res: Response
+    // ) {
+    //     const token = req.body.token;
+    //     const refreshToken = await this.userService.getRefreshToken(
+    //         2
+    //     )
+    //     const secretData = {
+    //         token,
+    //         refreshToken,
+    //     };
+    //     console.log("token-cookies", secretData)
+    //     res.cookie(authCookies.authCookie, secretData, {
+    //         httpOnly: true,
+    //         // domain: 'http://localhost:4200', // your domain here!
+    //         // expires: new Date(Date.now() + 1000 * 60 * 60 * 24)
+    //     });
+    //     return { msg: 'success' };
+    // }
 }

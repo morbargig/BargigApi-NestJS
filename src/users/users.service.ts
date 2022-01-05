@@ -98,7 +98,7 @@ export class UsersService {
     public async getRefreshToken(userId: number): Promise<string> {
         const userDataToUpdate = {
             refreshToken: randomToken.generate(16),
-            refreshTokenExp: moment().day(1).format('YYYY/MM/DD'),
+            refreshTokenExp: moment().add(14, 'days').format('YYYY/MM/DD'),
         };
         await this.user.update(userId, userDataToUpdate);
         return userDataToUpdate.refreshToken;
@@ -114,7 +114,14 @@ export class UsersService {
                 refreshTokenExp: MoreThanOrEqual(currentDate),
             }
         });
-        if (user) {
+        // (async () => {
+        //     const user = await this.user.find()
+        //     // console.log(user)
+        //     // debugger
+        // })()
+        // console.log(user, currentDate, refreshToken, email)
+        // debugger
+        if (!user) {
             return null;
         }
         const currentUser = new CurrentUser();
@@ -122,5 +129,6 @@ export class UsersService {
         currentUser.firstName = user.firstName;
         currentUser.lastName = user.lastName;
         currentUser.userId = user.userId;
+        return currentUser
     }
 }
